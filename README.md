@@ -3,7 +3,7 @@
 Cheesesquare Sample - Customized Version
 ===================================
 
-From [Original Version](https://github.com/chrisbanes/cheesesquare)
+[Original Version](https://github.com/chrisbanes/cheesesquare)
 
 Demos the new Android Design library. This is not an exhaustive sample, but shows
 some of the important features in the Design library:
