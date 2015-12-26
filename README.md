@@ -19,7 +19,8 @@ Pre-requisites
 - Android Build Tools v22.0.1
 - Android Support Repository r16 (for v22.2.1)
 
-Customized Contents:
+Customized Contents
+--------------
 
 ```
 		final ViewGroup.LayoutParams toolbarLayoutParams = toolbar.getLayoutParams();
