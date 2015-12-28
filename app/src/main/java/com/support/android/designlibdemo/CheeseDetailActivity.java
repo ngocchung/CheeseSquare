@@ -100,9 +100,12 @@ public class CheeseDetailActivity extends AppCompatActivity {
                         if (appbarLayoutParams.height - toolbarLayoutParams.height <= extended_text_size) {
                             int value = appbarLayoutParams.height - toolbarLayoutParams.height;
                             if (value < 0) {
-                                appbarLayoutParams.height = toolbarLayoutParams.height - value + extended_text_size;
+                                appbarLayoutParams.height = toolbarLayoutParams.height - value + extended_text_size * 3;
                             } else {
-                                appbarLayoutParams.height = toolbarLayoutParams.height + extended_text_size;
+                                appbarLayoutParams.height = toolbarLayoutParams.height + extended_text_size * 3;
+                            }
+                            if (appbarLayoutParams.height >= screenHeight) {
+                                appbarLayoutParams.height = screenHeight;
                             }
                         }
 
