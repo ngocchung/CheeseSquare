@@ -21,10 +21,13 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Menu;
 import android.view.ViewGroup;
@@ -41,6 +44,7 @@ public class CheeseDetailActivity extends AppCompatActivity {
     private final Context mContext = this;
     private int screenHeight;
     private int linearLayoutHeight;
+    private int toolbarHeight_org;
     private int toolbarHeight;
 
     @Override
@@ -51,12 +55,22 @@ public class CheeseDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final String cheeseName = intent.getStringExtra(EXTRA_NAME);
 
+        screenHeight = getScreenHeight(this);
+
+        TypedValue typedValue = new TypedValue();
+        getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        final int colorPrimary = typedValue.data;
+
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        AppBarLayout appbar = (AppBarLayout) findViewById(R.id.appbar);
+        final CoordinatorLayout.LayoutParams appbarLayoutParams = (CoordinatorLayout.LayoutParams)appbar.getLayoutParams();
+
         final ViewGroup.LayoutParams toolbarLayoutParams = toolbar.getLayoutParams();
         if (toolbarLayoutParams != null) {
+            toolbarHeight_org = toolbarLayoutParams.height;
             toolbarHeight = toolbarLayoutParams.height;
         }
 
@@ -64,7 +78,9 @@ public class CheeseDetailActivity extends AppCompatActivity {
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle(cheeseName);
 
-        screenHeight = getScreenHeight(this);
+        collapsingToolbar.setContentScrimColor(colorPrimary);
+        collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedTitleTextAppearance);
+        collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedTitleTextAppearance);
 
         final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout1);
         ViewTreeObserver observer = linearLayout.getViewTreeObserver();
@@ -75,14 +91,31 @@ public class CheeseDetailActivity extends AppCompatActivity {
                 if (linearLayoutHeight + toolbarHeight < screenHeight) {
                     if (toolbarLayoutParams != null) {
                         toolbarLayoutParams.height = screenHeight - linearLayoutHeight - 20;
+                        if (toolbarLayoutParams.height < toolbarHeight_org) {
+                            toolbarLayoutParams.height = toolbarHeight_org;
+                        }
+
+                        int extended_text_size = (int) getResources().getDimension(R.dimen.expanded_text_size);
+
+                        if (appbarLayoutParams.height - toolbarLayoutParams.height <= extended_text_size) {
+                            int value = appbarLayoutParams.height - toolbarLayoutParams.height;
+                            if (value < 0) {
+                                appbarLayoutParams.height = toolbarLayoutParams.height - value + extended_text_size;
+                            } else {
+                                appbarLayoutParams.height = toolbarLayoutParams.height + extended_text_size;
+                            }
+                        }
+
                         // collapsingToolbar.setContentScrimColor(getResources().getColor(android.R.color.transparent));
-                        collapsingToolbar.setContentScrimColor(ContextCompat.getColor(mContext, android.R.color.transparent));
+                        if (toolbarLayoutParams.height > toolbarHeight_org) {
+                            collapsingToolbar.setContentScrimColor(ContextCompat.getColor(mContext, android.R.color.transparent));
+                        }
                     }
                 }
                 // Removes the listener if possible
                 ViewTreeObserver viewTreeObserver = linearLayout.getViewTreeObserver();
                 if (viewTreeObserver.isAlive()) {
-                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
                         linearLayout.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                     } else {
                         linearLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -92,6 +125,7 @@ public class CheeseDetailActivity extends AppCompatActivity {
         });
 
         loadBackdrop();
+        appbar.setExpanded(true);
     }
 
     private int getScreenHeight(Context context) {

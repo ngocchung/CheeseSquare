@@ -35,4 +35,12 @@
         <item name="android:orientation">vertical</item>
     </style>
 
+    <style name="ExpandedTitleTextAppearance">
+        <item name="android:textSize">@dimen/expanded_text_size</item>
+    </style>
+
+    <style name="CollapsedTitleTextAppearance">
+        <item name="android:textSize">@dimen/collapsed_text_size</item>
+    </style>
+
 </resources>
